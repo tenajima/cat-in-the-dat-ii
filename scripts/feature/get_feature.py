@@ -70,7 +70,10 @@ class GetFeature(gokart.TaskOnKart):
         return ff.get_feature_task(self.features)
 
     def output(self):
-        return self.make_target("./feature/feature.pkl")
+        # return self.make_target("./feature/feature.pkl")
+        return self.make_large_data_frame_target(
+            "./feature/feature.zip", max_byte=10 ** 30
+        )
 
     def run(self):
         data: pd.DataFrame = self.load("Target")
