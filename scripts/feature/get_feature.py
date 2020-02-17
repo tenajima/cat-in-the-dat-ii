@@ -56,6 +56,7 @@ class GetFeature(gokart.TaskOnKart):
                 OriginFeature,
                 BinaryCategorical,
                 Ordinary,
+                OneHotEncode,
             ]:
                 lst.append(obj.__name__)
         return lst
@@ -152,6 +153,35 @@ class Ordinary(Feature):
         )
         dataset = reduce_mem_usage(dataset)
         self.dump(dataset)
+
+
+class OneHotEncode(Feature):
+    target_column: str = ""
+
+    def run(self):
+        required_columns = {self.index_columns, self.target_column, "target"}
+        dataset = self.load_data_frame(
+            required_columns=required_columns, drop_columns=True
+        )
+        dataset = dataset.set_index(self.index_columns)
+
+        train = dataset.loc[dataset[self.predict_column].notna(), self.target_column]
+        test = dataset.loc[dataset[self.predict_column].isna(), self.target_column]
+
+        categories = train.dropna().unique()
+
+        train = pd.get_dummies(
+            pd.Categorical(train, categories),
+            prefix="OHE_" + self.target_column,
+            dummy_na=True,
+        )
+        test = pd.get_dummies(
+            pd.Categorical(test, categories),
+            prefix="OHE_" + self.target_column,
+            dummy_na=True,
+        )
+        result = reduce_mem_usage(pd.concat([train, test]).sort_index())
+        self.dump(result)
 
 
 # ===================================================================================
@@ -283,3 +313,42 @@ class MonthSinCos(Feature):
         dataset = reduce_mem_usage(dataset)
         self.dump(dataset)
 
+
+class Nom0(OneHotEncode):
+    target_column = "nom_0"
+
+
+class Nom1(OneHotEncode):
+    target_column = "nom_1"
+
+
+class Nom2(OneHotEncode):
+    target_column = "nom_2"
+
+
+class Nom3(OneHotEncode):
+    target_column = "nom_3"
+
+
+class Nom4(OneHotEncode):
+    target_column = "nom_4"
+
+
+class Nom5(OneHotEncode):
+    target_column = "nom_5"
+
+
+class Nom6(OneHotEncode):
+    target_column = "nom_6"
+
+
+class Nom7(OneHotEncode):
+    target_column = "nom_7"
+
+
+class Nom8(OneHotEncode):
+    target_column = "nom_8"
+
+
+class Nom9(OneHotEncode):
+    target_column = "nom_9"
