@@ -1,7 +1,6 @@
 import gokart
 import luigi
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
 
 from scripts.model.model_lightgbm import train_lgb
 from scripts.train.preprocess import Preprocess, DataForML
@@ -14,6 +13,9 @@ class TrainStratifiedKFold(gokart.TaskOnKart):
 
     def requires(self):
         return Preprocess()
+
+    def output(self):
+        return self.make_target("./train/models.pkl")
 
     def run(self):
         data: DataForML = self.load()

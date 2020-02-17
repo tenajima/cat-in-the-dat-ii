@@ -3,12 +3,14 @@ from typing import Dict, List
 
 import gokart
 import luigi
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 
-from .dataset import GetDataSet
 from scripts.utils import reduce_mem_usage
+
+from .dataset import GetDataSet
 
 
 class FeatureFactory:
@@ -65,6 +67,9 @@ class GetFeature(gokart.TaskOnKart):
         if not self.features:
             self.features = self.feature_list()
         return ff.get_feature_task(self.features)
+
+    def output(self):
+        return self.make_target("./feature/feature.pkl")
 
     def run(self):
         data: pd.DataFrame = self.load("Target")
@@ -249,3 +254,32 @@ class Ord5(Ordinary):
 
         dataset = reduce_mem_usage(dataset)
         self.dump(dataset)
+
+
+class DaySinCos(Feature):
+    def run(self):
+        required_columns = {self.index_columns, "day"}
+        dataset = self.load_data_frame(
+            required_columns=required_columns, drop_columns=True
+        )
+        dataset = dataset.set_index(self.index_columns)
+        dataset["day_sin"] = np.sin(2 * np.pi * dataset["day"] / 7)
+        dataset["day_cos"] = np.cos(2 * np.pi * dataset["day"] / 7)
+        dataset = dataset[["day_sin", "day_cos"]].fillna(-10)
+        dataset = reduce_mem_usage(dataset)
+        self.dump(dataset)
+
+
+class MonthSinCos(Feature):
+    def run(self):
+        required_columns = {self.index_columns, "month"}
+        dataset = self.load_data_frame(
+            required_columns=required_columns, drop_columns=True
+        )
+        dataset = dataset.set_index(self.index_columns)
+        dataset["month_sin"] = np.sin(2 * np.pi * dataset["month"] / 12)
+        dataset["month_cos"] = np.cos(2 * np.pi * dataset["month"] / 12)
+        dataset = dataset[["month_sin", "month_cos"]].fillna(-10)
+        dataset = reduce_mem_usage(dataset)
+        self.dump(dataset)
+

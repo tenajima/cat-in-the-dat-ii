@@ -26,6 +26,9 @@ class Preprocess(gokart.TaskOnKart):
     def requires(self):
         return GetFeature()
 
+    def output(self):
+        return self.make_target("./train/preprocessed_data.pkl")
+
     def run(self):
         if self.use_columns:
             required_columns = sorted(
