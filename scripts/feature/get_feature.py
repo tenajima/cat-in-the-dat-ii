@@ -71,18 +71,18 @@ class GetFeature(gokart.TaskOnKart):
 
     def output(self):
         # return self.make_target("./feature/feature.pkl")
-        return self.make_large_data_frame_target(
-            "./feature/feature.zip", max_byte=10 ** 30
-        )
+        return self.make_large_data_frame_target("./feature/feature.zip")
 
     def run(self):
         data: pd.DataFrame = self.load("Target")
 
         for key in self.input().keys():
+            print(key)
             if key == "Target":
                 continue
             feature: pd.DataFrame = self.load(key)
             data = data.join(feature)
+        print("go dump")
         self.dump(data)
 
 
@@ -337,21 +337,4 @@ class Nom4(OneHotEncode):
     target_column = "nom_4"
 
 
-class Nom5(OneHotEncode):
-    target_column = "nom_5"
-
-
-class Nom6(OneHotEncode):
-    target_column = "nom_6"
-
-
-class Nom7(OneHotEncode):
-    target_column = "nom_7"
-
-
-class Nom8(OneHotEncode):
-    target_column = "nom_8"
-
-
-class Nom9(OneHotEncode):
-    target_column = "nom_9"
+# Nom5から9まではカテゴリ数が多すぎるので単純にOHEできない
