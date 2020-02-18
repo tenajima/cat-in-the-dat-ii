@@ -57,6 +57,7 @@ class Predict(gokart.TaskOnKart):
         out_of_fold = pd.DataFrame(index=train_X.index)
         submit = pd.DataFrame(index=test_X.index)
         submit["target"] = sub
+        print(submit.head())
         out_of_fold["target"] = oof
 
         score = roc_auc_score(train_y, oof)

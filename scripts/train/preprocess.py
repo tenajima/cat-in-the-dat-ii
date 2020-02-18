@@ -32,13 +32,13 @@ class Preprocess(gokart.TaskOnKart):
     def run(self):
         if self.use_columns:
             required_columns = sorted(
-                list(set(self.use_columns) - set(self.drop_columns))
+                list({"id"} | set(self.use_columns) - set(self.drop_columns))
             )
             feature: pd.DataFrame = self.load_data_frame(
                 required_columns=required_columns, drop_columns=True
-            )
+            ).sort_index()
         else:
-            feature: pd.DataFrame = self.load_data_frame()
+            feature: pd.DataFrame = self.load_data_frame().sort_index()
             if self.drop_columns:
                 feature = feature.drop(columns=self.drop_columns)
         train = feature[feature["target"].notna()].copy()

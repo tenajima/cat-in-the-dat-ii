@@ -59,7 +59,7 @@ def train_lgb(
                 params,
                 trn_set,
                 valid_sets=[trn_set, val_set],
-                num_boost_round=100000,
+                num_boost_round=1000,
                 early_stopping_rounds=100,
                 verbose_eval=100,
             )

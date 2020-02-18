@@ -63,7 +63,6 @@ class GetFeature(gokart.TaskOnKart):
 
     def requires(self):
         ff = FeatureFactory()
-        # print(self.feature_list())
         # もしparameterのfeaturesが空なら全部の特徴量を作る
         if not self.features:
             self.features = self.feature_list()
@@ -77,12 +76,11 @@ class GetFeature(gokart.TaskOnKart):
         data: pd.DataFrame = self.load("Target")
 
         for key in self.input().keys():
-            print(key)
             if key == "Target":
                 continue
             feature: pd.DataFrame = self.load(key)
             data = data.join(feature)
-        print("go dump")
+
         self.dump(data)
 
 
@@ -173,17 +171,20 @@ class OneHotEncode(Feature):
 
         categories = train.dropna().unique()
 
-        train = pd.get_dummies(
+        train_dummied = pd.get_dummies(
             pd.Categorical(train, categories),
             prefix="OHE_" + self.target_column,
             dummy_na=True,
         )
-        test = pd.get_dummies(
+        train_dummied.index = train.index
+
+        test_dummied = pd.get_dummies(
             pd.Categorical(test, categories),
             prefix="OHE_" + self.target_column,
             dummy_na=True,
         )
-        result = reduce_mem_usage(pd.concat([train, test]).sort_index())
+        test_dummied.index = test.index
+        result = reduce_mem_usage(pd.concat([train_dummied, test_dummied]).sort_index())
         self.dump(result)
 
 
