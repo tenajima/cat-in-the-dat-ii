@@ -318,6 +318,26 @@ class MonthSinCos(Feature):
         self.dump(dataset)
 
 
+class OHEBin0(OneHotEncode):
+    target_column = "bin_0"
+
+
+class OHEBin1(OneHotEncode):
+    target_column = "bin_1"
+
+
+class OHEBin2(OneHotEncode):
+    target_column = "bin_2"
+
+
+class OHEBin3(OneHotEncode):
+    target_column = "bin_3"
+
+
+class OHEBin4(OneHotEncode):
+    target_column = "bin_4"
+
+
 class Nom0(OneHotEncode):
     target_column = "nom_0"
 
