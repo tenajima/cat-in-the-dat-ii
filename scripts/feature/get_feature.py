@@ -338,6 +338,30 @@ class OHEBin4(OneHotEncode):
     target_column = "bin_4"
 
 
+class OHEOrd0(OneHotEncode):
+    target_column = "ord_0"
+
+
+class OHEOrd1(OneHotEncode):
+    target_column = "ord_1"
+
+
+class OHEOrd2(OneHotEncode):
+    target_column = "ord_2"
+
+
+class OHEOrd3(OneHotEncode):
+    target_column = "ord_3"
+
+
+class OHEOrd4(OneHotEncode):
+    target_column = "ord_4"
+
+
+class OHEOrd5(OneHotEncode):
+    target_column = "ord_5"
+
+
 class Nom0(OneHotEncode):
     target_column = "nom_0"
 
