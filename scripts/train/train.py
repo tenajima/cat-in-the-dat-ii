@@ -1,9 +1,8 @@
 import gokart
 import luigi
-import pandas as pd
 
 from scripts.model.model_lightgbm import train_lgb
-from scripts.train.preprocess import Preprocess, DataForML
+from scripts.train.preprocess import DataForML, Preprocess
 
 
 class TrainStratifiedKFold(gokart.TaskOnKart):

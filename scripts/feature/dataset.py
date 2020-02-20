@@ -8,12 +8,8 @@ class GetDataSet(gokart.TaskOnKart):
     random_state = luigi.IntParameter()
 
     def run(self):
-        train: pd.DataFrame = pd.read_csv(
-            "../input/cat-in-the-dat-ii/train.csv"
-        )
-        test = pd.read_csv(
-            "../input/cat-in-the-dat-ii/test.csv"
-        )
+        train: pd.DataFrame = pd.read_csv("../input/cat-in-the-dat-ii/train.csv")
+        test = pd.read_csv("../input/cat-in-the-dat-ii/test.csv")
 
         if self.nrows:
             train = train.sample(n=self.nrows, random_state=self.random_state)
