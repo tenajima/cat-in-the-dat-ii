@@ -199,24 +199,30 @@ class CountEncode(Feature):
         )
         dataset = dataset.set_index(self.index_columns)
 
-        train = dataset.loc[dataset[self.predict_column].notna(), self.target_column]
+        train = dataset[dataset[self.predict_column].notna()]
 
         encoding = (
             train[self.target_column]
             .value_counts()
-            .to_frame()
-            .reset_index(
+            .reset_index()
+            .rename(
                 columns={
                     self.target_column: "count_encode_" + self.target_column,
-                    self.index_columns: self.target_column,
+                    "index": self.target_column,
                 }
             )
         )
         result = (
-            dataset[[self.target_column]]
-            .reset_index()
-            .merge(encoding, on=self.target_column, how="left")
-        ).fillna(-10)
+            (
+                dataset[[self.target_column]]
+                .reset_index()
+                .merge(encoding, on=self.target_column, how="left")
+            )
+            .fillna(-10)
+            .drop(columns=self.target_column)
+            .set_index(self.index_columns)
+        )
+        result = reduce_mem_usage(result)
 
         self.dump(result)
 
@@ -416,6 +422,22 @@ class Nom4(OneHotEncode):
 
 
 # Nom5から9まではカテゴリ数が多すぎるので単純にOHEできない
+
+
+class CENom1(CountEncode):
+    target_column = "nom_1"
+
+
+class CENom2(CountEncode):
+    target_column = "nom_2"
+
+
+class CENom3(CountEncode):
+    target_column = "nom_3"
+
+
+class CENom4(CountEncode):
+    target_column = "nom_4"
 
 
 class CENom5(CountEncode):
