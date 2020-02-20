@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score
 
-from scripts.train.preprocess import DataForML, Preprocess
+from scripts.train.preprocess import Preprocess
 from scripts.train.train import TrainStratifiedKFold
 
 
