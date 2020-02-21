@@ -7,10 +7,12 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
+import category_encoders as ce
 
 from scripts.utils import reduce_mem_usage
 
 from .dataset import GetDataSet
+from scripts.train.fold import GetFold
 
 
 class FeatureFactory:
@@ -58,6 +60,7 @@ class GetFeature(gokart.TaskOnKart):
                 Ordinary,
                 OneHotEncode,
                 CountEncode,
+                GetFold,
             ]:
                 lst.append(obj.__name__)
         return lst
@@ -458,3 +461,75 @@ class CENom8(CountEncode):
 
 class CENom9(CountEncode):
     target_column = "nom_9"
+
+
+class TargetEncode(gokart.TaskOnKart):
+
+    index_columns = "id"
+    predict_column = "target"
+    smoothing = luigi.FloatParameter(default=0.2)
+
+    def requires(self):
+        return {"dataset": GetDataSet(), "fold": GetFold()}
+
+    def run(self):
+        dataset: pd.DataFrame = self.load_data_frame("dataset").set_index(
+            self.index_columns
+        )
+        fold = self.load("fold")
+
+        train = dataset[dataset[self.predict_column].notna()]
+        train_y = train[self.predict_column]
+        test = dataset[dataset[self.predict_column].isna()]
+
+        target_encode_columns = [
+            "bin_0",
+            "bin_1",
+            "bin_2",
+            "bin_3",
+            "bin_4",
+            "nom_0",
+            "nom_1",
+            "nom_2",
+            "nom_3",
+            "nom_4",
+            "nom_5",
+            "nom_6",
+            "nom_7",
+            "nom_8",
+            "nom_9",
+            "ord_0",
+            "ord_1",
+            "ord_2",
+            "ord_3",
+            "ord_4",
+            "ord_5",
+            "day",
+            "month",
+        ]
+
+        encoded_train: pd.DataFrame = pd.DataFrame()
+        for trn_idx, val_idx in fold.split(train, train_y):
+            encoder = ce.TargetEncoder(
+                cols=target_encode_columns, smoothing=self.smoothing
+            )
+            encoder.fit(train.iloc[trn_idx], train_y.iloc[trn_idx])
+            encoded_train = pd.concat(
+                [
+                    encoded_train,
+                    encoder.transform(train.iloc[val_idx])[target_encode_columns],
+                ]
+            )
+
+        encoder = ce.TargetEncoder(cols=target_encode_columns, smoothing=self.smoothing)
+        encoder.fit(train, train_y)
+        encoded_test = encoder.transform(test)
+
+        encoded_dataset = pd.concat([encoded_train, encoded_test])[
+            target_encode_columns
+        ].sort_index()
+
+        rename_map = {col: "TargetEncode_" + col for col in target_encode_columns}
+        encoded_dataset = encoded_dataset.rename(columns=rename_map)
+
+        self.dump(encoded_dataset)
