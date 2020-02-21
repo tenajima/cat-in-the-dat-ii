@@ -146,6 +146,22 @@ python-versions = "~=3.5"
 version = "4.0.0"
 
 [[package]]
+category = "main"
+description = "A collection sklearn transformers to encode categorical variables as numeric"
+name = "category-encoders"
+optional = false
+python-versions = "*"
+version = "2.1.0"
+
+[package.dependencies]
+numpy = ">=1.11.3"
+pandas = ">=0.21.1"
+patsy = ">=0.4.1"
+scikit-learn = ">=0.20.0"
+scipy = ">=0.19.0"
+statsmodels = ">=0.6.1"
+
+[[package]]
 category = "dev"
 description = "Python package for providing Mozilla's CA Bundle."
 name = "certifi"
@@ -773,6 +789,18 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 version = "0.7.0"
 
 [[package]]
+category = "main"
+description = "A Python package for describing statistical models and for building design matrices."
+name = "patsy"
+optional = false
+python-versions = "*"
+version = "0.5.1"
+
+[package.dependencies]
+numpy = ">=1.4"
+six = "*"
+
+[[package]]
 category = "dev"
 description = "Pexpect allows easy control of interactive console applications."
 marker = "sys_platform != \"win32\""
@@ -1133,6 +1161,25 @@ aiohttp = ">3.5.2"
 optional = ["aiodns (>1.0)"]
 
 [[package]]
+category = "main"
+description = "Statistical computations and models for Python"
+name = "statsmodels"
+optional = false
+python-versions = "*"
+version = "0.11.0"
+
+[package.dependencies]
+numpy = ">=1.14"
+pandas = ">=0.21"
+patsy = ">=0.5"
+scipy = ">=1.0"
+
+[package.extras]
+build = ["cython (>=0.29)"]
+develop = ["cython (>=0.29)"]
+docs = ["sphinx", "nbconvert", "jupyter-client", "ipykernel", "matplotlib", "nbformat", "numpydoc", "pandas-datareader"]
+
+[[package]]
 category = "dev"
 description = "Terminals served to xterm.js using Tornado websockets"
 name = "terminado"
@@ -1291,7 +1338,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "4d9953e94e46cd094ef5b42c1c165935051c0b1d9cdadc80e63d1ea984f3dc01"
+content-hash = "985048bc8dda9642fb3ef021d50f04ad94fa8323606d2b29b2cc880acf1a7ebd"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1352,6 +1399,10 @@ botocore = [
 cachetools = [
     {file = "cachetools-4.0.0-py3-none-any.whl", hash = "sha256:b304586d357c43221856be51d73387f93e2a961598a9b6b6670664746f3b6c6c"},
     {file = "cachetools-4.0.0.tar.gz", hash = "sha256:9a52dd97a85f257f4e4127f15818e71a0c7899f121b34591fcc1173ea79a0198"},
+]
+category-encoders = [
+    {file = "category_encoders-2.1.0-py2.py3-none-any.whl", hash = "sha256:a3f214fdfbd26e86e7809d44b3fea9d292a617b4b50b39f329116bae5b07f62c"},
+    {file = "category_encoders-2.1.0.tar.gz", hash = "sha256:9d76a2d810e02ad9527bed9c70b01fcb0f2238778b5422128275b5ba7561ca64"},
 ]
 certifi = [
     {file = "certifi-2019.11.28-py2.py3-none-any.whl", hash = "sha256:017c25db2a153ce562900032d5bc68e9f191e44e9a0f762f373977de9df1fbb3"},
@@ -1623,6 +1674,10 @@ pathspec = [
     {file = "pathspec-0.7.0-py2.py3-none-any.whl", hash = "sha256:163b0632d4e31cef212976cf57b43d9fd6b0bac6e67c26015d611a647d5e7424"},
     {file = "pathspec-0.7.0.tar.gz", hash = "sha256:562aa70af2e0d434367d9790ad37aed893de47f1693e4201fd1d3dca15d19b96"},
 ]
+patsy = [
+    {file = "patsy-0.5.1-py2.py3-none-any.whl", hash = "sha256:5465be1c0e670c3a965355ec09e9a502bf2c4cbe4875e8528b0221190a8a5d40"},
+    {file = "patsy-0.5.1.tar.gz", hash = "sha256:f115cec4201e1465cd58b9866b0b0e7b941caafec129869057405bfe5b5e3991"},
+]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
     {file = "pexpect-4.8.0.tar.gz", hash = "sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c"},
@@ -1889,6 +1944,29 @@ six = [
 slackclient = [
     {file = "slackclient-2.5.0-py2.py3-none-any.whl", hash = "sha256:16ebbfa1c34374fa8c508d0c8e5c670e41bba4a3f62c469ab1ee1b8225a939fa"},
     {file = "slackclient-2.5.0.tar.gz", hash = "sha256:d37e4f91be9cf9d5c1a1698f44a37671fc92823ff01146cd827415f35fabe636"},
+]
+statsmodels = [
+    {file = "statsmodels-0.11.0-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:071649014680bc7cad74d323878a41099db0bb1bb0d93e7d640a0d341b467da6"},
+    {file = "statsmodels-0.11.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:eb19fd8dcf7bb2b45b0835074face22b53bdfb6cc8d778fd072ca303c8351adb"},
+    {file = "statsmodels-0.11.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:854c0fce335fb3271fd3786b94931443bb282de77c7082d735abfa0bfed73ab1"},
+    {file = "statsmodels-0.11.0-cp35-none-win32.whl", hash = "sha256:70fd072beae7403343783d9850190052a5fa83029c4c5806429d8ee0b919d7b7"},
+    {file = "statsmodels-0.11.0-cp35-none-win_amd64.whl", hash = "sha256:d0cf4680939f34898c820f9b310cad05c4d7fa3d17d078eca3928a933331abd8"},
+    {file = "statsmodels-0.11.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:28b869039bb0f905f81343e3c5f1a13a58ef7d758c4a5f60b9b469921dbcda6a"},
+    {file = "statsmodels-0.11.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:b1d01224b761c2d1fae2a89afb9ef039c7a63a6882f602128652baea437188f5"},
+    {file = "statsmodels-0.11.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:1840b899a4483b520531d0b731fb57e11a9251e2ed6c471dda0e77716f7b7bd6"},
+    {file = "statsmodels-0.11.0-cp36-none-win32.whl", hash = "sha256:4fb440b25dff41ee6df21e6cf83063aec669313fea799c9f2cb4b9204723e79e"},
+    {file = "statsmodels-0.11.0-cp36-none-win_amd64.whl", hash = "sha256:c8fe2a8d014c130dbacf49ef2f186404699d2aeb1cb8ead92d6a5779b1dd007c"},
+    {file = "statsmodels-0.11.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:67224a71c8c5fbf994d59198c10caa28eb6436dd4518b54468901bc6e91cdbfb"},
+    {file = "statsmodels-0.11.0-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:e213c84f0f32b984305855169344d53d594a09bce159a8699967ff592ee171a7"},
+    {file = "statsmodels-0.11.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:1c3591b8d34240447b54936c360d1556904c81058b10b2a28092267af683bd4f"},
+    {file = "statsmodels-0.11.0-cp37-none-win32.whl", hash = "sha256:c8319b91f5892f36debefc4c259ef52457a2ce0a0b4486f5f999ad8d45977767"},
+    {file = "statsmodels-0.11.0-cp37-none-win_amd64.whl", hash = "sha256:9be4907a8b8ac8d0e1dd143c905faf9c28a4072ed2b0dfcc87aca50aff9bfe6f"},
+    {file = "statsmodels-0.11.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:5c135ce37036e3791c229d30a13475ba0fb868015fdbd0a1878261b48026ba76"},
+    {file = "statsmodels-0.11.0-cp38-cp38-manylinux1_i686.whl", hash = "sha256:13e35799cd86ccbb9e94941b7199c75f7f5194ce3b36a11cb5af8ae8b791301c"},
+    {file = "statsmodels-0.11.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:70bba2b4ce256e5b6d9193cb9ec5e7ebafc96f6334e01248eeddaa62ba6ef60d"},
+    {file = "statsmodels-0.11.0-cp38-none-win32.whl", hash = "sha256:64fee746d1089808cbbbcc377910e93dce21646aa0e67fa7d54ee488df545524"},
+    {file = "statsmodels-0.11.0-cp38-none-win_amd64.whl", hash = "sha256:414d423e804769bc6959ae57dc36595976fb12732e7c3ed02bdc45e970592120"},
+    {file = "statsmodels-0.11.0.tar.gz", hash = "sha256:0a8ee8fc091d9ef1db68f01e6e0079acc0f41671dfbac463131939ca573f8c71"},
 ]
 terminado = [
     {file = "terminado-0.8.3-py2.py3-none-any.whl", hash = "sha256:a43dcb3e353bc680dd0783b1d9c3fc28d529f190bc54ba9a229f72fe6e7a54d7"},
