@@ -1,4 +1,6 @@
 import inspect
+from abc import ABCMeta, abstractmethod
+from copy import deepcopy
 from typing import Dict, List
 
 import category_encoders as ce
@@ -6,6 +8,7 @@ import gokart
 import luigi
 import numpy as np
 import pandas as pd
+from sklearn.base import BaseEstimator
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
 
@@ -61,6 +64,10 @@ class GetFeature(gokart.TaskOnKart):
                 OneHotEncode,
                 CountEncode,
                 GetFold,
+                CategoryEncoders,
+                ABCMeta,
+                BaseEstimator,
+                CategoryEncodeUsingTarget,
             ]:
                 lst.append(obj.__name__)
         return lst
@@ -228,6 +235,12 @@ class CountEncode(Feature):
         result = reduce_mem_usage(result)
 
         self.dump(result)
+
+
+class CategoryEncoders(metaclass=ABCMeta):
+    @abstractmethod
+    def get_encoder(self) -> BaseEstimator:
+        pass
 
 
 # ===================================================================================
@@ -463,16 +476,17 @@ class CENom9(CountEncode):
     target_column = "nom_9"
 
 
-class TargetEncode(gokart.TaskOnKart):
-
-    index_columns = "id"
-    predict_column = "target"
-    smoothing = luigi.FloatParameter(default=0.2)
+class CategoryEncodeUsingTarget(Feature, CategoryEncoders):
+    target_columns = luigi.Parameter()
 
     def requires(self):
         return {"dataset": GetDataSet(), "fold": GetFold()}
 
     def run(self):
+        self.target_columns = self.target_columns.split(",")
+        encoder = self.get_encoder()
+        encoder_for_test = deepcopy(encoder)
+
         dataset: pd.DataFrame = self.load_data_frame("dataset").set_index(
             self.index_columns
         )
@@ -482,54 +496,35 @@ class TargetEncode(gokart.TaskOnKart):
         train_y = train[self.predict_column]
         test = dataset[dataset[self.predict_column].isna()]
 
-        target_encode_columns = [
-            "bin_0",
-            "bin_1",
-            "bin_2",
-            "bin_3",
-            "bin_4",
-            "nom_0",
-            "nom_1",
-            "nom_2",
-            "nom_3",
-            "nom_4",
-            "nom_5",
-            "nom_6",
-            "nom_7",
-            "nom_8",
-            "nom_9",
-            "ord_0",
-            "ord_1",
-            "ord_2",
-            "ord_3",
-            "ord_4",
-            "ord_5",
-            "day",
-            "month",
-        ]
-
         encoded_train: pd.DataFrame = pd.DataFrame()
+
         for trn_idx, val_idx in fold.split(train, train_y):
-            encoder = ce.TargetEncoder(
-                cols=target_encode_columns, smoothing=self.smoothing
-            )
             encoder.fit(train.iloc[trn_idx], train_y.iloc[trn_idx])
             encoded_train = pd.concat(
                 [
                     encoded_train,
-                    encoder.transform(train.iloc[val_idx])[target_encode_columns],
+                    encoder.transform(train.iloc[val_idx])[self.target_columns],
                 ]
             )
 
-        encoder = ce.TargetEncoder(cols=target_encode_columns, smoothing=self.smoothing)
-        encoder.fit(train, train_y)
-        encoded_test = encoder.transform(test)
+        encoder_for_test.fit(train, train_y)
+        encoded_test = encoder_for_test.transform(test)
 
         encoded_dataset = pd.concat([encoded_train, encoded_test])[
-            target_encode_columns
+            self.target_columns
         ].sort_index()
 
-        rename_map = {col: "TargetEncode_" + col for col in target_encode_columns}
+        rename_map = {
+            col: encoder.__class__.__name__ + "_" + col for col in self.target_columns
+        }
         encoded_dataset = encoded_dataset.rename(columns=rename_map)
+        encoded_dataset = reduce_mem_usage(encoded_dataset)
 
         self.dump(encoded_dataset)
+
+
+class TargetEncode(CategoryEncodeUsingTarget):
+    smoothing = luigi.FloatParameter()
+
+    def get_encoder(self) -> BaseEstimator:
+        return ce.TargetEncoder(cols=self.target_columns, smoothing=self.smoothing)
