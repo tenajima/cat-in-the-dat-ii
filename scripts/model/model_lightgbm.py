@@ -1,7 +1,7 @@
 import os
 import pickle
 from logging import getLogger
-from typing import Union, List
+from typing import List, Union
 
 import lightgbm as lgb
 import numpy as np

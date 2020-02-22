@@ -1,9 +1,10 @@
 import dataclasses
 from typing import Union
+
 import gokart
 import luigi
 import pandas as pd
-from sklearn.model_selection import KFold, StratifiedKFold, GroupKFold
+from sklearn.model_selection import GroupKFold, KFold, StratifiedKFold
 
 from scripts.feature.get_feature import GetFeature
 from scripts.train.fold import GetFold

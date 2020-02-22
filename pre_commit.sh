@@ -1,3 +1,5 @@
-poetry run black scripts
-poetry run isort scripts/*.py
-poetry run flake8 --ignore=E501,W503 scripts
+path=scripts/
+# poetry run pytest -v
+poetry run isort -rc ${path}
+poetry run black ${path}
+poetry run flake8  ${path}

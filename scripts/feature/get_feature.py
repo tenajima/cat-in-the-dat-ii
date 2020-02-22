@@ -1,18 +1,18 @@
 import inspect
 from typing import Dict, List
 
+import category_encoders as ce
 import gokart
 import luigi
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from tqdm import tqdm
-import category_encoders as ce
 
+from scripts.train.fold import GetFold
 from scripts.utils import reduce_mem_usage
 
 from .dataset import GetDataSet
-from scripts.train.fold import GetFold
 
 
 class FeatureFactory:
