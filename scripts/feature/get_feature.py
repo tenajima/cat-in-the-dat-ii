@@ -528,3 +528,23 @@ class TargetEncode(CategoryEncodeUsingTarget):
 
     def get_encoder(self) -> BaseEstimator:
         return ce.TargetEncoder(cols=self.target_columns, smoothing=self.smoothing)
+
+
+class CatBoostEncode(CategoryEncodeUsingTarget):
+    def get_encoder(self) -> BaseEstimator:
+        return ce.CatBoostEncoder(cols=self.target_columns)
+
+
+class JamesSteinEncode(CategoryEncodeUsingTarget):
+    def get_encoder(self) -> BaseEstimator:
+        return ce.JamesSteinEncoder(cols=self.target_columns)
+
+
+class MEstimateEncoder(CategoryEncodeUsingTarget):
+    def get_encoder(self) -> BaseEstimator:
+        return ce.MEstimateEncoder(cols=self.target_columns)
+
+
+class WOEEncoder(CategoryEncodeUsingTarget):
+    def get_encoder(self) -> BaseEstimator:
+        return ce.WOEEncoder(cols=self.target_columns)
