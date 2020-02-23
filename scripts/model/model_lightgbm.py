@@ -6,6 +6,9 @@ from typing import List, Union
 import lightgbm as lgb
 import numpy as np
 import pandas as pd
+from optuna.integration import lightgbm_tuner
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
 
 from scripts.utils import delete_tmp_pickle
 
@@ -69,3 +72,44 @@ def train_lgb(
 
     delete_tmp_pickle()
     return models
+
+
+def tune_lgb(
+    X: Union[pd.DataFrame, np.array], y: Union[pd.Series, np.array], seed: int,
+):
+    """lightgbmを用いてfoldごとのモデルを返す。
+
+    Args:
+        X (Union[pd.DataFrame, np.array]): 特徴行列
+        y (Union[pd.Series, np.array]): 目的変数
+
+    Returns:
+        List[lgb.Booster]: Boosterのリスト
+    """
+    params = {
+        "objective": "binary",
+        "metric": "binary_logloss",
+        "verbosity": -1,
+        "boosting_type": "gbdt",
+    }
+
+    best_params, tuning_history = dict(), list()
+
+    train_x, val_x, train_y, val_y = train_test_split(X, y, test_size=0.25)
+    dtrain = lgb.Dataset(train_x, label=train_y)
+    dval = lgb.Dataset(val_x, label=val_y)
+
+    model = lightgbm_tuner.train(
+        params,
+        dtrain,
+        valid_sets=[dtrain, dval],
+        best_params=best_params,
+        tuning_history=tuning_history,
+        verbose_eval=100,
+        early_stopping_rounds=100,
+    )
+
+    prediction = model.predict(val_x, num_iteration=model.best_iteration)
+    auc = roc_auc_score(val_y, prediction)
+    print("AUC: ", auc)
+    return {"best_params": best_params, "history": tuning_history}
