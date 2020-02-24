@@ -1,10 +1,10 @@
 import gokart
+import lightgbm as lgb
 import luigi
 import pandas as pd
-import lightgbm as lgb
 
 from scripts.model.model_lightgbm import train_lgb
-from scripts.train.preprocess import Preprocess, DataForML
+from scripts.train.preprocess import DataForML, Preprocess
 
 
 class _TrainModelForNullImportance(gokart.TaskOnKart):
@@ -17,7 +17,9 @@ class _TrainModelForNullImportance(gokart.TaskOnKart):
         return Preprocess()
 
     def output(self):
-        return self.make_target(f"./null_importance/{self.model_name}/importance.pkl")
+        return self.make_target(
+            f"./null_importance/models/{self.model_name}/importance.pkl"
+        )
 
     def run(self):
         data: DataForML = self.load()
@@ -63,7 +65,33 @@ class NullImportance(gokart.TaskOnKart):
         return requires_
 
     def output(self):
-        return self.make_target("./train/models.pkl")
+        return self.make_target("./null_importance/importance_cols.txt")
 
     def run(self):
-        pass
+        importance = pd.DataFrame()
+
+        for i in range(1, 100):
+            tmp = self.load(f"model_" + str(i).zfill(2))
+            importance = pd.concat([importance, tmp])
+        importance["is_normal"] = 0
+
+        normal_importance = self.load("model_00")
+        normal_importance["is_normal"] = 1
+
+        importance = pd.concat([normal_importance, importance])
+
+        positive = importance.query("is_normal == 1")
+        negative = importance.query("is_normal == 0")
+
+        negative = negative.groupby("feature").agg(
+            importance_mean=("importance", "mean"), importance_std=("importance", "std")
+        )
+        negative["border_line"] = (
+            negative["importance_mean"] + negative["importance_std"]
+        )
+
+
+        result = positive.set_index("feature").join(negative)
+
+        result = result.query("importance < border_line").sort_index().index.tolist()
+        self.dump(r'"' + '","'.join(result) + r'"')
