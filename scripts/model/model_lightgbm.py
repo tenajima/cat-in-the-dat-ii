@@ -62,7 +62,7 @@ def train_lgb(
                 params,
                 trn_set,
                 valid_sets=[trn_set, val_set],
-                num_boost_round=1000,
+                num_boost_round=100000,
                 early_stopping_rounds=100,
                 verbose_eval=100,
             )
@@ -105,7 +105,8 @@ def tune_lgb(
         valid_sets=[dtrain, dval],
         best_params=best_params,
         tuning_history=tuning_history,
-        verbose_eval=100,
+        num_boost_round=1000000,
+        verbose_eval=100,        
         early_stopping_rounds=100,
     )
 
