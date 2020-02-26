@@ -14,7 +14,7 @@ gokart = "^0.3.11"
 python-dotenv = "^0.11.0"
 category-encoders = "^2.1.0"
 optuna = "^1.1.0"
-nyaggle = "^0.1.1"
+nyaggle = {git = "https://github.com/nyanp/nyaggle.git", rev = "master"}
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^1.2.6"
