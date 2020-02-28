@@ -80,8 +80,8 @@ class GetFeature(gokart.TaskOnKart):
         return ff.get_feature_task(self.features)
 
     def output(self):
-        # return self.make_target("./feature/feature.pkl")
-        return self.make_large_data_frame_target("./feature/feature.zip")
+        return self.make_target("./feature/feature.pkl")
+        # return self.make_large_data_frame_target("./feature/feature.zip")
 
     def run(self):
         data: pd.DataFrame = self.load("Target")
@@ -327,18 +327,33 @@ class Ord5(Ordinary):
             required_columns=required_columns, drop_columns=True
         )
         dataset = dataset.set_index(self.index_columns)
-        dataset["Ord5_1"] = dataset["ord_5"].map(
-            lambda string: ord(string[0]), na_action="ignore"
-        )
-        dataset["Ord5_2"] = dataset["ord_5"].map(
-            lambda string: ord(string[1]), na_action="ignore"
-        )
         map_ord5 = {
-            key: value
+            key: value + 1
             for value, key in enumerate(sorted(dataset["ord_5"].dropna().unique()))
         }
         dataset["Ordinary_ord_5"] = dataset["ord_5"].map(map_ord5)
-        dataset = dataset[["Ord5_1", "Ord5_2", "Ordinary_ord_5"]]
+        dataset = dataset[["Ordinary_ord_5"]]
+        dataset = dataset.fillna(0).astype(int)
+
+        dataset = reduce_mem_usage(dataset)
+        self.dump(dataset)
+
+class Ord5_first(Ordinary):
+    """ ord_5の1文字目 """
+    def run(self):
+        required_columns = {self.index_columns, "ord_5"}
+        dataset: pd.DataFrame = self.load_data_frame(
+            required_columns=required_columns, drop_columns=True
+        )
+        dataset = dataset.set_index(self.index_columns)
+        dataset = dataset.convert_dtypes()
+        dataset['ord_5_first'] = dataset['ord_5'].str[0]
+        map_ord5 = {
+            key: value + 1
+            for value, key in enumerate(sorted(dataset["ord_5_first"].dropna().unique()))
+        }
+        dataset["ord_5_first"] = dataset["ord_5_first"].map(map_ord5)
+        dataset = dataset[["ord_5_first"]]
         dataset = dataset.fillna(0).astype(int)
 
         dataset = reduce_mem_usage(dataset)
