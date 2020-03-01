@@ -68,6 +68,8 @@ class GetFeature(gokart.TaskOnKart):
                 ABCMeta,
                 BaseEstimator,
                 CategoryEncodeUsingTarget,
+                DiffFeature,
+                DevideFeature,
             ]:
                 lst.append(obj.__name__)
         return lst
@@ -86,6 +88,7 @@ class GetFeature(gokart.TaskOnKart):
         data: pd.DataFrame = self.load("Target")
 
         for key in self.input().keys():
+            print(key)
             if key == "Target":
                 continue
             feature: pd.DataFrame = self.load(key)
@@ -566,3 +569,164 @@ class MEstimateEncoder(CategoryEncodeUsingTarget):
 class WOEEncoder(CategoryEncodeUsingTarget):
     def get_encoder(self) -> BaseEstimator:
         return ce.WOEEncoder(cols=self.target_columns)
+
+
+class DiffFeature(gokart.TaskOnKart):
+    required_tasks = {"first": Ord2(), "second": Ord3()}
+
+    def requires(self):
+        return self.required_tasks
+
+    def run(self):
+        first: pd.DataFrame = self.load_data_frame("first").iloc[:, 0]
+        second: pd.DataFrame = self.load_data_frame("second").iloc[:, 0]
+
+        result: pd.DataFrame = pd.DataFrame(index=first.index)
+        result[
+            f"Diff{self.required_tasks['first'].__class__.__name__}-{self.required_tasks['second'].__class__.__name__}"
+        ] = (first - second)
+        result[
+            f"Diff{self.required_tasks['second'].__class__.__name__}-{self.required_tasks['first'].__class__.__name__}"
+        ] = (second - first)
+        self.dump(result)
+
+
+class DevideFeature(gokart.TaskOnKart):
+    required_tasks = {"first": Ord2(), "second": Ord3()}
+
+    def requires(self):
+        return self.required_tasks
+
+    def run(self):
+        first: pd.DataFrame = self.load_data_frame("first").iloc[:, 0] + 1
+        second: pd.DataFrame = self.load_data_frame("second").iloc[:, 0] + 1
+
+        result: pd.DataFrame = pd.DataFrame(index=first.index)
+        result[
+            f"Devide{self.required_tasks['first'].__class__.__name__}/{self.required_tasks['second'].__class__.__name__}"
+        ] = (first / second)
+        result[
+            f"Devide{self.required_tasks['second'].__class__.__name__}/{self.required_tasks['first'].__class__.__name__}"
+        ] = (second / first)
+        self.dump(result)
+
+
+class DiffOrd0Ord1(DiffFeature):
+    required_tasks = {"first": Ord0(), "second": Ord1()}
+
+
+class DiffOrd0Ord2(DiffFeature):
+    required_tasks = {"first": Ord0(), "second": Ord2()}
+
+
+class DiffOrd0Ord3(DiffFeature):
+    required_tasks = {"first": Ord0(), "second": Ord3()}
+
+
+class DiffOrd0Ord4(DiffFeature):
+    required_tasks = {"first": Ord0(), "second": Ord4()}
+
+
+class DiffOrd0Ord5(DiffFeature):
+    required_tasks = {"first": Ord0(), "second": Ord5()}
+
+
+class DiffOrd1Ord2(DiffFeature):
+    required_tasks = {"first": Ord1(), "second": Ord2()}
+
+
+class DiffOrd1Ord3(DiffFeature):
+    required_tasks = {"first": Ord1(), "second": Ord3()}
+
+
+class DiffOrd1Ord4(DiffFeature):
+    required_tasks = {"first": Ord1(), "second": Ord4()}
+
+
+class DiffOrd1Ord5(DiffFeature):
+    required_tasks = {"first": Ord1(), "second": Ord5()}
+
+
+class DiffOrd2Ord3(DiffFeature):
+    required_tasks = {"first": Ord2(), "second": Ord3()}
+
+
+class DiffOrd2Ord4(DiffFeature):
+    required_tasks = {"first": Ord2(), "second": Ord4()}
+
+
+class DiffOrd2Ord5(DiffFeature):
+    required_tasks = {"first": Ord2(), "second": Ord5()}
+
+
+class DiffOrd3Ord4(DiffFeature):
+    required_tasks = {"first": Ord3(), "second": Ord4()}
+
+
+class DiffOrd3Ord5(DiffFeature):
+    required_tasks = {"first": Ord3(), "second": Ord5()}
+
+
+class DiffOrd4Ord5(DiffFeature):
+    required_tasks = {"first": Ord4(), "second": Ord5()}
+
+
+# ========================================================
+class DevideOrd0Ord1(DevideFeature):
+    required_tasks = {"first": Ord0(), "second": Ord1()}
+
+
+class DevideOrd0Ord2(DevideFeature):
+    required_tasks = {"first": Ord0(), "second": Ord2()}
+
+
+class DevideOrd0Ord3(DevideFeature):
+    required_tasks = {"first": Ord0(), "second": Ord3()}
+
+
+class DevideOrd0Ord4(DevideFeature):
+    required_tasks = {"first": Ord0(), "second": Ord4()}
+
+
+class DevideOrd0Ord5(DevideFeature):
+    required_tasks = {"first": Ord0(), "second": Ord5()}
+
+
+class DevideOrd1Ord2(DevideFeature):
+    required_tasks = {"first": Ord1(), "second": Ord2()}
+
+
+class DevideOrd1Ord3(DevideFeature):
+    required_tasks = {"first": Ord1(), "second": Ord3()}
+
+
+class DevideOrd1Ord4(DevideFeature):
+    required_tasks = {"first": Ord1(), "second": Ord4()}
+
+
+class DevideOrd1Ord5(DevideFeature):
+    required_tasks = {"first": Ord1(), "second": Ord5()}
+
+
+class DevideOrd2Ord3(DevideFeature):
+    required_tasks = {"first": Ord2(), "second": Ord3()}
+
+
+class DevideOrd2Ord4(DevideFeature):
+    required_tasks = {"first": Ord2(), "second": Ord4()}
+
+
+class DevideOrd2Ord5(DevideFeature):
+    required_tasks = {"first": Ord2(), "second": Ord5()}
+
+
+class DevideOrd3Ord4(DevideFeature):
+    required_tasks = {"first": Ord3(), "second": Ord4()}
+
+
+class DevideOrd3Ord5(DevideFeature):
+    required_tasks = {"first": Ord3(), "second": Ord5()}
+
+
+class DevideOrd4Ord5(DevideFeature):
+    required_tasks = {"first": Ord4(), "second": Ord5()}
