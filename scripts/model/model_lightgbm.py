@@ -106,7 +106,7 @@ def tune_lgb(
         best_params=best_params,
         tuning_history=tuning_history,
         num_boost_round=1000000,
-        verbose_eval=100,        
+        verbose_eval=100,
         early_stopping_rounds=100,
     )
 

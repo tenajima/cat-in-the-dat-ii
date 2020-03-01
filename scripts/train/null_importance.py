@@ -90,7 +90,6 @@ class NullImportance(gokart.TaskOnKart):
             negative["importance_mean"] + negative["importance_std"]
         )
 
-
         result = positive.set_index("feature").join(negative)
 
         result = result.query("importance < border_line").sort_index().index.tolist()

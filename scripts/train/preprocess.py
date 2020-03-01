@@ -27,7 +27,9 @@ class Preprocess(gokart.TaskOnKart):
         return {"fold": GetFold(), "feature": GetFeature()}
 
     def output(self):
-        return self.make_target("./train/preprocessed_data.pkl")
+        return self.make_target(
+            "./preprocess/preprocessed_data.pkl", use_unique_id=False
+        )
 
     def run(self):
         fold = self.load("fold")
